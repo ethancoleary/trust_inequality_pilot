@@ -1,0 +1,152 @@
+body {
+  font-size: 18px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ================================================================
+   ROOT VARIABLES
+   ================================================================ */
+:root {
+  --box-shadow: 2px 3px 10px rgba(0, 0, 0, 0.08);
+  --success:    #d4edda;
+  --danger:     #f8d7da;
+}
+
+/* ================================================================
+   CONTENT BOX
+   ================================================================ */
+.content-box {
+  padding: 25px;
+  margin: 30px auto;
+  max-width: 900px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  box-shadow: var(--box-shadow);
+}
+
+/* ================================================================
+   BOX COLOUR VARIANTS
+   (applies to content-box, section-box, or any div)
+   ================================================================ */
+.box-white    { background-color: white !important; }
+.box-white2    { background-color: #f4f6fb !important; }
+.box-info     { background-color: #e8f6fe !important; }
+.box-task     { background-color: #fff5ee !important; }
+.box-warn     { background-color: #fffdf0 !important; }
+.box-contrast { background-color: #edfdfa !important; }
+.box-success  { background-color: var(--success) !important; }
+.box-danger   { background-color: var(--danger)  !important; }
+
+/* ================================================================
+   SECTION BOX (inner cards with hover lift)
+   ================================================================ */
+.section-box {
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 25px;
+  border: 1px solid #ddd;
+  box-shadow: var(--box-shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.section-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 2px 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+.section-box-nonhover {
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 25px;
+  border: 1px solid #ddd;
+  box-shadow: var(--box-shadow);
+}
+
+/* ================================================================
+   FEEDBACK BOXES (inline alerts)
+   ================================================================ */
+.box-success,
+.box-danger {
+  border-radius: 8px;
+  border: 1px solid;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: var(--box-shadow);
+}
+
+/* ================================================================
+   TIMER
+   ================================================================ */
+.otree-timer { display: none !important; }
+
+.otree-timer_2 {
+  font-size: 20px;
+  text-align: center;
+  background-color: #e8f4fd;
+  color: #333;
+  padding: 10px 20px;
+  margin: 20px auto;
+  border: 2px solid #a8cfe8;
+  border-radius: 8px;
+  width: fit-content;
+  display: block;
+  box-shadow: var(--box-shadow);
+}
+
+/* ================================================================
+   NAVIGATION BUTTONS
+   ================================================================ */
+.buttons-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+#NextButton {
+  margin-left: auto;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+#NextButton:hover {
+  background-color: #28a745;
+  border-color: #28a745;
+  color: #fff;
+}
+
+/* ================================================================
+   BOX HOVER EFFECTS
+   ================================================================ */
+.content-box,
+.section-box,
+.section-box-nonhover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.content-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Colour-tinted glow on hover per variant */
+.content-box.box-white:hover    { box-shadow: 0 8px 24px rgba(180, 180, 200, 0.35); }
+.content-box.box-info:hover     { box-shadow: 0 8px 24px rgba(100, 170, 230, 0.35); }
+.content-box.box-task:hover     { box-shadow: 0 8px 24px rgba(200, 160, 120, 0.35); }
+.content-box.box-warn:hover     { box-shadow: 0 8px 24px rgba(220, 200, 80,  0.35); }
+.content-box.box-contrast:hover { box-shadow: 0 8px 24px rgba(80,  180, 140, 0.35); }
+
+
+.badge-blue {
+  background-color: #4a90d9 !important;
+  color: #ffffff;
+}
+
+.thead-blue {
+  background-color: #4a90d9 !important;
+  color: #ffffff;
+}
+
+.thead-blue th {
+  color: #ffffff !important;
+}

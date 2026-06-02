@@ -1,0 +1,96 @@
+{{ block title }}
+{{ endblock }}
+{{ block content }}
+<link rel="stylesheet" href="{{static 'css/css.css'}}">
+<link rel="stylesheet" href="{{static 'css/modal.css'}}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+<!--<div class="content-box box-white">
+    <div class="text-center">
+        <h3>Introduction</h3>
+        </div>
+    <hr>
+<p>
+Welcome to this study. During your participation, you will make a number of decisions
+that will affect your bonus payments. The study will last approximately 10-12 minutes
+and you will receive a participation fee of £1.20.
+</p>
+<p>
+    It is always in your best interest to answer all questions in this study honestly.
+</p>
+<p>
+    To monitor attention, this study tracks whether you switch tabs/windows and how
+long you spend on each page. We ask that you do not perform any other tasks while
+completing this study to give us your full attention.
+</p>
+<p>
+    To complete the study, you will have to pass some comprehension questions.
+</p>
+    </div>-->
+    <div class="content-box box-white2">
+    <div class="text-center">
+        <h3>Welcome to this study</h3></div>
+<hr>
+
+<p>
+    All data collected in this study is anonymised.
+    Only anonymous data may be shared in open science repositories.
+At any point in the study, you may opt out and return your submission.
+
+    Incomplete responses will be discarded before analysis.
+</p>
+<p>
+    There are no known risks to this study and you are not required to provide any
+    personally identifiable information.
+</p>
+<p>
+    This study has received ethical approval from the Norwegian School of Economics'
+    Institutional Review Board.
+    Should you have any further questions regarding this study, please contact ethan.oleary@nhh.no.
+</p>
+<p>
+    Should you agree to these terms, please indicate your consent below.
+    If you disagree, you may withdraw now by closing your browser and return your submission.
+</p>
+<br>
+    <input type="checkbox"
+       style="margin-right: 10px;"
+       name="consent"
+       value="1">
+<b>I agree to participate in this study and understand how the data I provide will be used.</b>
+<br><br>
+        <center>
+        {{ next_button }}
+<br>
+{{ formfield_errors 'consent' }}
+    </div>
+
+<div style="display:none">
+    {% for field in form %}
+      {% if field.name in hidden_fields %}
+        {{ formfield field.name }}
+      {% endif %}
+    {% endfor %}
+</div>
+
+{{ endblock }}
+
+{{ block scripts }}
+    {{ super }}
+    {{ load static }}
+    <script>
+        // Reset blur tracking at the start of the experiment
+        document.addEventListener('DOMContentLoaded', function () {
+            localStorage.removeItem('blur_count_global');
+            localStorage.removeItem('blur_pages');
+
+            // Also reset the hidden fields on this page
+            const logField = document.getElementById('id_blur_log');
+            const countField = document.getElementById('id_blur_count');
+            const warnedField = document.getElementById('id_blur_warned');
+            if (logField) logField.value = '[]';
+            if (countField) countField.value = '0';
+            if (warnedField) warnedField.value = '0';
+        });
+    </script>
+
+{{ endblock }}

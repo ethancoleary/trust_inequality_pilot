@@ -1,0 +1,36 @@
+
+
+
+{{ block content }}
+<link rel="stylesheet" href="{{static 'css/css.css'}}">
+<link rel="stylesheet" href="{{static 'css/modal.css'}}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+
+<!-- Box 1: white -->
+<div class="content-box box-white">
+    <div class="text-center">
+     <p>
+    You will be redirected automatically redirected to Prolific.
+
+</p>
+
+
+        </div>
+
+</div>
+
+
+
+{{ endblock }}
+{{ block scripts }}
+    {{ super }}
+    {{ load static }}
+    <script>
+    let completionlink = js_vars.completionlinkfull;
+
+    window.onload = function(){
+        window.location.href=completionlink;
+    }
+</script>
+
+{{ endblock }}

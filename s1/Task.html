@@ -1,0 +1,202 @@
+{{ block title }}{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{static 'css/css.css'}}">
+<link rel="stylesheet" href="{{static 'css/modal.css'}}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+
+
+
+<div class="container mt-3">
+
+  <div class="content-box box-warn">
+      <center>
+        <strong>Time remaining: <span id="timer">2:00</span></strong></center>
+      </div>
+
+      <div class="content-box box-task">
+    <!-- Score -->
+    <p class="text-center">Correct so far: <strong><span id="score">{{ score }}</span></strong></p>
+
+    <!-- Task -->
+    <div class="card mb-4">
+        <div class="card-body text-center">
+            <h4>Decrypt this code:</h4>
+            <h2 id="code" class="display-4 letter-spacing-wide">
+                {% for letter in code %}
+                    <span class="badge badge-blue mx-1">{{ letter }}</span>
+                {% endfor %}
+            </h2>
+        </div>
+    </div>
+
+    <!-- Decryption Key -->
+    <div class="card mb-4">
+        <div class="card-header"><strong>Decryption Key</strong></div>
+        <div class="card-body">
+            <table class="table table-bordered table-sm text-center">
+                <thead class="thead-blue">
+                    <tr>
+                        {% for enc, plain in key_items %}
+                            <th>{{ enc }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        {% for enc, plain in key_items %}
+                            <td>{{ plain }}</td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Answer Box -->
+    <div class="text-center mb-3">
+        <input type="text"
+               id="answer-input"
+               class="form-control form-control-lg text-center mx-auto"
+               style="max-width: 300px; text-transform: uppercase;"
+               maxlength="5"
+               placeholder="Your answer"
+               autocomplete="off">
+        <div id="error-msg" class="text-danger mt-2" style="display:none;"></div>
+    </div>
+
+    <div class="text-center">
+        <button id="submit-btn" class="btn btn-primary btn-lg">Submit</button>
+    </div>
+<br>
+        <div class="alert alert-secondary">
+        <strong>How to read the key:</strong> find each letter from the code in the <strong>top row</strong>,
+        then read the letter directly below it. Type all 5 letters together (no spaces) and click <strong>Submit</strong>.
+    </div>
+
+          <!-- ⚠️ DEV ONLY — delete before launch ⚠️ -->
+    <div class="text-center mt-3">
+        <button onclick="document.getElementById('form').submit();"
+                class="btn btn-danger btn-sm">
+            ⚠️ [DEV] Skip to next page
+        </button>
+    </div>
+    <!-- ⚠️ END DEV ONLY ⚠️ -->
+
+</div>
+</div>
+
+<div style="display:none">
+    {% for field in form %}
+      {% if field.name in hidden_fields %}
+        {{ formfield field.name }}
+      {% endif %}
+    {% endfor %}
+</div>
+{{ endblock }}
+
+{{ block scripts }}
+{{ super }}
+<script src="{{ static 'data_quality.js' }}"></script>
+<script>
+    const TASK_TIME = {{ time_limit }};
+    let startTimestamp = null;
+    let timerInterval = null;
+
+    // ── Blur tracking ────────────────────────────────────────────
+    let blurCount = 0;
+    let blurLog = [];
+
+    document.addEventListener('visibilitychange', function () {
+        if (document.hidden) {
+            blurCount++;
+            blurLog.push({event: 'blur', time: Date.now() / 1000});
+        } else {
+            blurLog.push({event: 'focus', time: Date.now() / 1000});
+        }
+        // Write to hidden fields so they are submitted with the form
+        const countField = document.getElementById('id_task_blur_count');
+        const logField   = document.getElementById('id_task_blur_log');
+        if (countField) countField.value = blurCount;
+        if (logField)   logField.value   = JSON.stringify(blurLog);
+    });
+
+    // ── Live receive ─────────────────────────────────────────────
+    function liveRecv(data) {
+        if (data.type === 'error') {
+            const errDiv = document.getElementById('error-msg');
+            errDiv.textContent = data.message;
+            errDiv.style.display = 'block';
+            document.getElementById('answer-input').value = '';
+            document.getElementById('answer-input').focus();
+
+        } else if (data.type === 'next_task') {
+            document.getElementById('score').textContent = data.score;
+            document.getElementById('error-msg').style.display = 'none';
+            document.getElementById('answer-input').value = '';
+            const codeEl = document.getElementById('code');
+            codeEl.innerHTML = data.code.split('').map(
+                l => `<span class="badge badge-blue mx-1">${l}</span>`
+            ).join('');
+            updateKeyTable(data.key_items);
+            document.getElementById('answer-input').focus();
+
+        } else if (data.type === 'timeout') {
+            endTask();
+
+        } else if (data.type === 'done') {
+            document.getElementById('submit-btn').disabled = true;
+            document.getElementById('error-msg').style.display = 'block';
+            document.getElementById('error-msg').textContent = "All tasks completed!";
+            document.getElementById('error-msg').className = 'text-success mt-2';
+        }
+    }
+
+    function updateKeyTable(keyItems) {
+        const thead = document.querySelector('thead tr');
+        const tbody = document.querySelector('tbody tr');
+        thead.innerHTML = keyItems.map(([enc]) => `<th>${enc}</th>`).join('');
+        tbody.innerHTML = keyItems.map(([, plain]) => `<td>${plain}</td>`).join('');
+    }
+
+    function submitAnswer() {
+        const answer = document.getElementById('answer-input').value.trim().toUpperCase();
+        if (answer.length === 0) return;
+        liveSend({'type': 'submit', 'answer': answer, 'timestamp': Date.now() / 1000});
+    }
+
+    function endTask() {
+        clearInterval(timerInterval);
+        sessionStorage.removeItem('taskStart');
+        document.getElementById('submit-btn').disabled = true;
+        document.getElementById('answer-input').disabled = true;
+        document.getElementById('error-msg').style.display = 'block';
+        document.getElementById('error-msg').textContent = "Time is up! Moving on...";
+        setTimeout(() => { document.getElementById('form').submit(); }, 1500);
+    }
+
+    function updateTimer() {
+        const elapsed = (Date.now() / 1000) - startTimestamp;
+        const remaining = Math.max(0, TASK_TIME - elapsed);
+        const mins = Math.floor(remaining / 60);
+        const secs = Math.floor(remaining % 60);
+        document.getElementById('timer').textContent =
+            mins + ':' + String(secs).padStart(2, '0');
+        if (remaining <= 0) endTask();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        if (!sessionStorage.getItem('taskStart')) {
+            sessionStorage.setItem('taskStart', Date.now() / 1000);
+            liveSend({'type': 'start', 'timestamp': Date.now() / 1000});
+        }
+        startTimestamp = parseFloat(sessionStorage.getItem('taskStart'));
+        timerInterval = setInterval(updateTimer, 500);
+
+        document.getElementById('submit-btn').addEventListener('click', submitAnswer);
+        document.getElementById('answer-input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') submitAnswer();
+        });
+    });
+</script>
+{{ endblock }}

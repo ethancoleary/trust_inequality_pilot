@@ -1,0 +1,153 @@
+
+{{ block content }}
+<link rel="stylesheet" href="{{static 'css/css.css'}}">
+<link rel="stylesheet" href="{{static 'css/modal.css'}}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+
+<!-- Box 1: white -->
+<div class="content-box box-white2">
+    <div class="text-center">
+        <h3>Intro</h3>
+    </div>
+    <hr>
+    <p>
+        During this study, you will complete as many exercises of a task as you can in 2 minutes.
+        The task has been selected to ensure that a good score requires solely hard effort and relies little on pre-existing skills.
+    </p>
+    <p>
+        <b>For every exercise that you successfully complete, you will earn a bonus of £0.05.</b>
+    </p>
+</div>
+
+<!-- Box 2: info -->
+<div class="content-box box-info">
+    <div class="text-center">
+        <h3>The Task</h3>
+    </div>
+    <hr>
+    <p>
+        In each exercise you will need to <i>decrypt</i> a set of letters.
+        You will observe a <i>code</i>, <i>decryption key</i>, and an empty text box.
+    </p>
+    <p>
+        The <i>code</i> contains 5 letters. For each letter, you need to find the corresponding decrypted letter using the <i>decryption key</i>
+        and then type this letter in the empty text box.
+    </p>
+    <p>
+        Once you believe that you have successfully decrypted the <i>code</i> and typed it into the text box, you should click on 'Submit'.
+        If your decryption is correct, then a new exercise will appear and your score will increase by 1.
+    </p>
+</div>
+    <!-- Nested Box 3: task (example) -->
+    <div class="content-box box-task">
+        <div class="text-center">
+        <h3>Example</h3>
+    </div>
+        <hr>
+        <p>
+            Below is an example of an exercise. Exercises are not case-sensitive. <br><br>
+            <b>How to read the key:</b>
+            find each letter from the code in the <b>top row</b>, then read the letter directly below it.
+            Type all 5 letters together (no spaces) and click <b>Submit.</b><br><br>
+            Therefore the code <b>KHMBS</b> is decrypted to <b>HPERO</b>.
+        </p>
+
+        <!-- Example Code -->
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <h4>Decrypt this code:</h4>
+                <h2 class="display-4">
+                     <span class="badge badge-blue mx-1">K</span>
+                    <span class="badge badge-blue mx-1">H</span>
+                    <span class="badge badge-blue mx-1">M</span>
+                    <span class="badge badge-blue mx-1">B</span>
+                    <span class="badge badge-blue mx-1">S</span>
+                </h2>
+            </div>
+        </div>
+
+        <!-- Example Key -->
+        <div class="card mb-4">
+            <div class="card-header"><strong>Decryption Key</strong></div>
+            <div class="card-body">
+                <table class="table table-bordered table-sm text-center">
+                    <thead class="thead-blue">
+                        <tr>
+                            <th>A</th><th>B</th><th>C</th><th>D</th><th>E</th>
+                            <th>F</th><th>G</th><th>H</th><th>I</th><th>J</th>
+                            <th>K</th><th>L</th><th>M</th><th>N</th><th>O</th>
+                            <th>P</th><th>Q</th><th>R</th><th>S</th><th>T</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>N</td><td>R</td><td>W</td><td>F</td><td>Z</td>
+                            <td>L</td><td>Y</td><td>P</td><td>C</td><td>V</td>
+                            <td>H</td><td>S</td><td>E</td><td>A</td><td>G</td>
+                            <td>T</td><td>D</td><td>U</td><td>O</td><td>I</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Example Answer -->
+        <div class="text-center mb-3">
+            <input type="text"
+                   class="form-control form-control-lg text-center mx-auto"
+                   style="max-width: 300px; text-transform: uppercase;"
+                   maxlength="5"
+                   value="HPERO"
+                   disabled>
+            <div class="text-muted mt-2">
+                K→H, H→P, M→E, B→R, S→O &nbsp;∴&nbsp; the answer is <strong>HPERO</strong>
+            </div>
+        </div>
+
+    </div>
+    <!-- end box-task -->
+
+<!-- end box-info -->
+
+    <center>
+    {{ next_button }}</center>
+
+
+<div style="display:none">
+    {% for field in form %}
+      {% if field.name in hidden_fields %}
+        {{ formfield field.name }}
+      {% endif %}
+    {% endfor %}
+</div>
+
+
+{{ endblock }}
+
+{{ block scripts }}
+    {{ super }}
+    {{ load static }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+    localStorage.removeItem('blur_count_global');
+    localStorage.removeItem('blur_pages');
+    const logField = document.getElementById('id_blur_log');
+    const countField = document.getElementById('id_blur_count');
+    const warnedField = document.getElementById('id_blur_warned');
+    if (logField) logField.value = '[]';
+    if (countField) countField.value = '0';
+    if (warnedField) warnedField.value = '0';
+
+    // Rename the next button
+    // Rename the next button
+const nextBtn = document.getElementById('form-next-button')
+             || document.querySelector('button[type="submit"]')
+             || document.querySelector('.otree-btn-next')
+             || document.querySelector('input[type="submit"]');
+if (nextBtn) nextBtn.textContent = 'Begin the task';
+
+});
+
+    </script>
+    <script src="{{ static 'data_quality.js' }}"></script>
+{{ endblock }}

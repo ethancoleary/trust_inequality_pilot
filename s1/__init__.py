@@ -64,6 +64,7 @@ class Task(Page):
     form_model = 'player'
     task_blur_log = models.LongStringField(blank=True)
     task_blur_count = models.IntegerField(initial=0, blank=True)
+    form_fields = ['task_blur_count', 'task_blur_log']  # ADD THIS
     @staticmethod
     def vars_for_template(player: Player):
         tasks = player.session.vars['decryption_tasks']
@@ -86,11 +87,6 @@ class Task(Page):
 
     @staticmethod
     def live_method(player: Player, data):
-        """
-        Handles AJAX calls from the page:
-          - 'start': records the start timestamp
-          - 'submit': checks the answer and advances task or ends
-        """
         tasks = player.session.vars['decryption_tasks']
 
         if data['type'] == 'start':
@@ -99,13 +95,8 @@ class Task(Page):
             return {player.id_in_group: {'type': 'ack'}}
 
         if data['type'] == 'submit':
-            now = float(data['timestamp'])
-            elapsed = now - player.task_start_time
-            time_remaining = C.TASK_TIME - elapsed
-
-            if time_remaining <= 0:
-                return {player.id_in_group: {'type': 'timeout'}}
-
+            # Let the CLIENT handle timeout — don't reject based on server time.
+            # The client timer calls endTask() and submits the form when time is up.
             idx = player.current_task_index
             task = tasks[idx]
             user_answer = data['answer'].strip().upper()
@@ -113,25 +104,26 @@ class Task(Page):
             if user_answer != task['answer']:
                 return {player.id_in_group: {
                     'type': 'error',
-                    'message': 'Your decryption is incorrect, try again.'
+                    'message': 'Incorrect — try again.'
                 }}
 
             # Correct answer
             player.score += 1
             player.current_task_index += 1
 
+            # All 100 tasks exhausted
             if player.current_task_index >= len(tasks):
                 return {player.id_in_group: {'type': 'done', 'score': player.score}}
 
-            # Send next task
+            # Send next task — key_items must be list of lists for JSON
             next_task = tasks[player.current_task_index]
-            key_items = sorted(next_task['key'].items())
+            key_items = [list(item) for item in sorted(next_task['key'].items())]
+
             return {player.id_in_group: {
                 'type': 'next_task',
                 'code': next_task['code'],
                 'key_items': key_items,
                 'score': player.score,
-                'time_remaining': time_remaining,
             }}
 
 

@@ -8,7 +8,7 @@ SESSION_CONFIGS = [
             's1'
         ],
         num_demo_participants=10,
-        completionlinkfull='https://app.prolific.com/submissions/complete?cc=CHXPJ2PR',
+        completionlinkfull='https://app.prolific.com/submissions/complete?cc=C1PO8E12',
     )
 ]
 
@@ -36,7 +36,7 @@ USE_POINTS = True
 
 ADMIN_USERNAME = 'admin'
 # for security, best to set admin password in an environment variable
-ADMIN_PASSWORD = environ.get('OTREE_ADMIN_PASSWORD')
+ADMIN_PASSWORD = 'password'
 
 DEMO_PAGE_INTRO_HTML = """ """
 

@@ -21,8 +21,10 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
-    consent = models.IntegerField()
-
+    consent = models.BooleanField(
+        widget=widgets.CheckboxInput,
+        blank=False,
+    )
     blur_log = models.LongStringField(blank=True)
     blur_count = models.IntegerField(initial=0, blank=True)
     blur_warned = models.IntegerField(initial=0, blank=True)

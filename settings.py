@@ -36,8 +36,11 @@ USE_POINTS = True
 
 ADMIN_USERNAME = 'admin'
 # for security, best to set admin password in an environment variable
-ADMIN_PASSWORD = 'password'
+ADMIN_PASSWORD = environ.get('OTREE_ADMIN_PASSWORD')
 
 DEMO_PAGE_INTRO_HTML = """ """
 
 SECRET_KEY = '7127299695462'
+
+OTREE_PRODUCTION = environ.get('OTREE_PRODUCTION', '0') == '1'
+AUTH_LEVEL = environ.get('OTREE_AUTH_LEVEL', '')

@@ -1,2 +1,2 @@
-web: otree prodserver1of2
+web: otree prodserver
 
